@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LO GIS — Location-Allocation Geographic Information System</title>
+    <meta name="description" content="Optimasi Lokasi Fasilitas Pariwisata Terpadu Kabupaten Kendal Berbasis Network Analysis">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary:  '#14532D',
+                        'primary-light': '#166534',
+                        accent:   '#D97706',
+                        crimson:  '#DC2626',
+                        surface:  '#F8FAFC',
+                        border:   '#E2E8F0',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-surface text-gray-800 font-sans antialiased">
+
+    <!-- ============================================================
+         NAVBAR
+         ============================================================ -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 lg:h-18">
+                <!-- Logo -->
+                <a href="#beranda" class="flex items-center gap-2.5 group">
+                    <div class="w-9 h-9 bg-primary rounded-lg flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="text-lg font-extrabold text-primary tracking-tight">LO</span>
+                        <span class="text-lg font-extrabold text-accent tracking-tight ml-0.5">GIS</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Nav Links -->
+                <div class="hidden lg:flex items-center gap-1">
+                    <a href="#beranda"      class="nav-link px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-primary hover:bg-green-50 transition-all">Beranda</a>
+                    <a href="#informasi"    class="nav-link px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-primary hover:bg-green-50 transition-all">Informasi</a>
+                    <a href="#peta"         class="nav-link px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-primary hover:bg-green-50 transition-all">Peta</a>
+                    <a href="#perhitungan"  class="nav-link px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-primary hover:bg-green-50 transition-all">Perhitungan</a>
+                    <a href="#metodologi"   class="nav-link px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-primary hover:bg-green-50 transition-all">Metodologi</a>
+                    <a href="#tentang"      class="nav-link px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-primary hover:bg-green-50 transition-all">Tentang</a>
+                </div>
+
+                <!-- Mobile Toggle -->
+                <button id="mobile-toggle" class="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition" aria-label="Toggle menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Nav -->
+        <div id="mobile-nav" class="mobile-nav lg:hidden bg-white border-t border-border px-4 pb-4">
+            <a href="#beranda"      class="block py-2.5 text-sm font-medium text-gray-600 hover:text-primary">Beranda</a>
+            <a href="#informasi"    class="block py-2.5 text-sm font-medium text-gray-600 hover:text-primary">Informasi</a>
+            <a href="#peta"         class="block py-2.5 text-sm font-medium text-gray-600 hover:text-primary">Peta</a>
+            <a href="#perhitungan"  class="block py-2.5 text-sm font-medium text-gray-600 hover:text-primary">Perhitungan</a>
+            <a href="#metodologi"   class="block py-2.5 text-sm font-medium text-gray-600 hover:text-primary">Metodologi</a>
+            <a href="#tentang"      class="block py-2.5 text-sm font-medium text-gray-600 hover:text-primary">Tentang</a>
+        </div>
+    </nav>
+
+
+    <!-- ============================================================
+         SECTION 1: BERANDA / HERO
+         ============================================================ -->
+    <section id="beranda" class="relative min-h-screen flex items-center bg-primary overflow-hidden">
+        <!-- Background decorations -->
+        <div class="absolute inset-0 hero-pattern"></div>
+        <div class="absolute inset-0 hero-grid"></div>
+
+        <!-- Floating decorative shapes -->
+        <div class="absolute top-20 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 lg:py-20 w-full">
+            <div class="text-center max-w-4xl mx-auto">
+                <!-- Badge -->
+                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-8">
+                    <span class="w-2 h-2 bg-accent rounded-full animate-pulse"></span>
+                    <span class="text-white/80 text-xs font-medium tracking-wide uppercase">WebGIS Penelitian Tata Ruang</span>
+                </div>
+
+                <!-- Title -->
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-white leading-tight mb-6">
+                    Optimasi Lokasi Fasilitas Pariwisata Terpadu
+                    <span class="block text-accent mt-2">Kabupaten Kendal</span>
+                </h1>
+
+                <!-- Subtitle -->
+                <p class="text-base sm:text-lg text-white/70 max-w-2xl mx-auto mb-6 leading-relaxed">
+                    Analisis <em>Location-Allocation</em> berbasis <em>SIG</em> untuk menentukan 
+                    Lokasi Optimal Fasilitas Pariwisata
+                    <strong class="text-white">di Kabupaten Kendal</strong>.
+                </p>
+
+                <!-- Subtitle info -->
+                <p class="text-sm text-white/50 mb-12 font-medium">
+                    Berbasis Shortest Path Algorithm &bull; Origin-Destination Cost Matrix &bull; GIS Network Dataset
+                </p>
+
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 max-w-3xl mx-auto mb-12">
+                    <!-- KPI 1 -->
+                    <div class="kpi-card bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-center">
+                        <div class="w-12 h-12 bg-crimson/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-6 h-6 text-crimson" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                        <p class="text-xs text-white/60 uppercase tracking-wider font-medium mb-1">Titik Optimal</p>
+                        <p class="text-xl font-bold text-white">Simpang Pegandon</p>
+                        <p class="text-xs text-accent font-semibold mt-1">Kandidat B (Wilayah Tengah)</p>
+                    </div>
+
+                    <!-- KPI 2 -->
+                    <div class="kpi-card bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-center">
+                        <div class="w-12 h-12 bg-accent/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <p class="text-xs text-white/60 uppercase tracking-wider font-medium mb-1">Total Waktu Tempuh</p>
+                        <p class="text-xl font-bold text-white"><span data-count="605" data-suffix=" Menit">0 Menit</span></p>
+                        <p class="text-xs text-green-400 font-semibold mt-1">▼ Terendah (Rata-rata: 50 mnt)</p>
+                    </div>
+
+                    <!-- KPI 3 -->
+                    <div class="kpi-card bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-center">
+                        <div class="w-12 h-12 bg-green-400/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                            </svg>
+                        </div>
+                        <p class="text-xs text-white/60 uppercase tracking-wider font-medium mb-1">Total Jarak Jaringan</p>
+                        <p class="text-xl font-bold text-white"><span data-count="355.72" data-suffix=" KM" data-decimals="2">0 KM</span></p>
+                        <p class="text-xs text-green-400 font-semibold mt-1">▼ Terendah (Rata-rata: 29,64 km)</p>
+                    </div>
+                </div>
+
+                <!-- CTA Button -->
+                <a href="#peta" class="pulse-glow inline-flex items-center gap-2 bg-accent hover:bg-amber-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all text-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                    </svg>
+                    Eksplorasi Peta
+                </a>
+            </div>
+        </div>
+
+        <!-- Bottom wave -->
+        <div class="absolute bottom-0 left-0 right-0">
+            <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 60L1440 60L1440 20C1440 20 1320 0 1080 10C840 20 720 50 480 40C240 30 120 0 0 20L0 60Z" fill="#F8FAFC"/>
+            </svg>
+        </div>
+    </section>
+
+
+    <!-- ============================================================
+         SECTION 2: INFORMASI — 12 DESTINASI WISATA
+         ============================================================ -->
+    <section id="informasi" class="py-20 lg:py-28 bg-surface">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Section Header -->
+            <div class="text-center mb-14 reveal">
+                <p class="text-xs font-semibold text-accent uppercase tracking-widest mb-3">Destinasi Wisata</p>
+                <h2 class="text-3xl lg:text-4xl font-extrabold text-primary mb-4">12 Objek Wisata Unggulan</h2>
+                <div class="section-divider mb-5"></div>
+                <p class="text-gray-500 max-w-xl mx-auto text-sm leading-relaxed">
+                    Objek wisata demand point dalam analisis <em>Location-Allocation</em> Kabupaten Kendal 
+                    beserta jarak dan estimasi waktu tempuh dari titik optimal Simpang Pegandon.
+                </p>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap justify-center gap-2 mb-10 reveal">
+                <button data-filter="semua"   class="filter-btng px-5 py-2 rounded-full text-sm font-medium border border-border bg-white text-gray-600 hover:border-primary">Semua</button>
+                <button data-filter="pantai"   class="filter-btn px-5 py-2 rounded-full text-sm font-medium border border-border bg-white text-gray-600 hover:border-primary">Wisata Pantai</button>
+                <button data-filter="alam"     class="filter-btn px-5 py-2 rounded-full text-sm font-medium border border-border bg-white text-gray-600 hover:border-primary">Wisata Alam / Pegunungan</button>
+                <button data-filter="buatan"   class="filter-btn px-5 py-2 rounded-full text-sm font-medium border border-border bg-white text-gray-600 hover:border-primary">Wisata Buatan</button>
+            </div>
+
+            <!-- Destination Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+
+                <!-- 1: Curug Lawe Sicepit -->
+                <div class="dest-card bg-white rounded-2xl border border-border p-6 reveal" data-category="alam">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 24 24"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider bg-green-50 text-green-700 px-2.5 py-1 rounded-full">Alam</span>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800 mb-1">Curug Lawe Sicepit</h3>
+                    <p class="text-xs text-accent font-medium mb-2">Kec. Sukorejo</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">Air terjun alami di kawasan perbukitan asri dengan aliran air jernih dan jalur tracking menyusuri hutan tropis.</p>
+                    <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                        <span>📍 41,27 km</span>
+                        <span>⏱ 73 mnt (1,22 jam)</span>
+                    </div>
+                </div>
+
+                <!-- 2: Curug Semawur -->
+                <div class="dest-card bg-white rounded-2xl border border-border p-6 reveal" data-category="alam">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 24 24"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider bg-green-50 text-green-700 px-2.5 py-1 rounded-full">Alam</span>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800 mb-1">Curug Semawur</h3>
+                    <p class="text-xs text-accent font-medium mb-2">Kec. Plantungan</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">Air terjun bertingkat delapan yang eksotis di lereng Gunung Prahu dengan panorama alam pegunungan yang asri.</p>
+                    <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                        <span>📍 53,61 km</span>
+                        <span>⏱ 110 mnt (1,83 jam)</span>
+                    </div>
+                </div>
+
+                <!-- 3: Curug Sewu -->
+                <div class="dest-card bg-white rounded-2xl border border-border p-6 reveal" data-category="alam">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 24 24"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider bg-green-50 text-green-700 px-2.5 py-1 rounded-full">Alam</span>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800 mb-1">Curug Sewu</h3>
+                    <p class="text-xs text-accent font-medium mb-2">Kec. Patean</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">Air terjun megah bertingkat tiga setinggi ±80 meter di kawasan hutan lindung, ikon wisata alam Kendal.</p>
+                    <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                        <span>📍 39,56 km</span>
+                        <span>⏱ 56 mnt (0,94 jam)</span>
+                    </div>
+                </div>
+
+                <!-- 4: Pemandian Air Panas Nglimut -->
+                <div class="dest-card bg-white rounded-2xl border border-border p-6 reveal" data-category="alam">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider bg-green-50 text-green-700 px-2.5 py-1 rounded-full">Alam</span>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800 mb-1">Pemandian Air Panas Nglimut</h3>
+                    <p class="text-xs text-accent font-medium mb-2">Kec. Limbangan</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">Sumber mata air panas belerang alami di lereng Gunung Ungaran dengan kolam pemandian air hangat dan udara sejuk.</p>
+                    <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                        <span>📍 38,62 km</span>
+                        <span>⏱ 63 mnt (1,05 jam)</span>
+                    </div>
+                </div>
+
+                <!-- 5: Kebun Teh Medini -->
+                <div class="dest-card bg-white rounded-2xl border border-border p-6 reveal" data-category="alam">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 24 24"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider bg-green-50 text-green-700 px-2.5 py-1 rounded-full">Alam</span>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800 mb-1">Kebun Teh Medini</h3>
+                    <p class="text-xs text-accent font-medium mb-2">Kec. Limbangan</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">Hamparan kebun teh 386 hektar di ketinggian 1.500 mdpl lereng Gunung Ungaran dengan panorama hijau berkabut.</p>
+                    <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                        <span>📍 41,66 km</span>
+                        <span>⏱ 75 mnt (1,25 jam)</span>
+                    </div>
+                </div>
+
+                <!-- 6: River Walk Boja -->
+                <div class="dest-card bg-white rounded-2xl border border-border p-6 reveal" data-category="buatan">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-purple-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider bg-purple-50 text-purple-600 px-2.5 py-1 rounded-full">Buatan</span>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800 mb-1">River Walk Boja</h3>
+                    <p class="text-xs text-accent font-medium mb-2">Kec. Boja</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">Destinasi wisata keluarga terpadu modern dengan waterpark tematik, mini zoo, spot foto estetik, dan kuliner tepi sungai.</p>
+                    <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                        <span>📍 27,66 km</span>
+                        <span>⏱ 37 mnt (0,61 jam)</span>
+                    </div>
+                </div>
+
+                <!-- 7: Goa Kiskendo -->
+                <div class="dest-card bg-white rounded-2xl border border-border p-6 reveal" data-category="alam">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 24 24"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider bg-green-50 text-green-700 px-2.5 py-1 rounded-full">Alam</span>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800 mb-1">Goa Kiskendo</h3>
+                    <p class="text-xs text-accent font-medium mb-2">Kec. Singorojo</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">Goa stalaktit-stalagmit alami di perbukitan kapur selatan Kendal yang sarat nilai geologi dan legenda pewayangan.</p>
+                    <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                        <span>📍 24,78 km</span>
+                        <span>⏱ 36 mnt (0,59 jam)</span>
+                    </div>
+                </div>
+
+                <!-- 8: Hutan Pinus Nglimut -->
+                <div class="dest-card bg-white rounded-2xl border border-border p-6 reveal" data-category="alam">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 24 24"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider bg-green-50 text-green-700 px-2.5 py-1 rounded-full">Alam</span>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800 mb-1">Hutan Pinus Nglimut</h3>
+                    <p class="text-xs text-accent font-medium mb-2">Kec. Limbangan</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">Kawasan ekowisata hutan pinus yang rindang di lereng pegunungan, area perkemahan alami, dan sarana outbound.</p>
+                    <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                        <span>📍 39,04 km</span>
+                        <span>⏱ 65 mnt (1,08 jam)</span>
+                    </div>
+                </div>
+
+                <!-- 9: Tirto Arum Kendal -->
+                <div class="dest-card bg-white rounded-2xl border border-border p-6 reveal" data-category="buatan">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-purple-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider bg-purple-50 text-purple-600 px-2.5 py-1 rounded-full">Buatan</span>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800 mb-1">Tirto Arum Kendal</h3>
+                    <p class="text-xs text-accent font-medium mb-2">Kec. Kendal</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">Agrowisata dan taman rekreasi air terbesar di tepi jalur Pantura Kota Kendal dengan kolam renang prestasi dan sarana bermain.</p>
+                    <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                        <span>📍 0,79 km (Sangat Dekat)</span>
+                        <span>⏱ 1 mnt (0,01 jam)</span>
+                    </div>
+                </div>
+
+                <!-- 10: Pantai Indah Kemangi -->
+                <div class="dest-card bg-white rounded-2xl border border-border p-6 reveal" data-category="pantai">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M2 20h20v2H2v-2zm2-8h2v7H4v-7zm5-3h2v10H9V9zm5-4h2v14h-2V5zm5 6h2v8h-2v-8z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full">Pantai</span>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800 mb-1">Pantai Indah Kemangi</h3>
+                    <p class="text-xs text-accent font-medium mb-2">Kec. Kangkung</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">Pantai pesisir utara berpasir luas dengan deretan cemara laut rindang, spot sunset menawan, dan kuliner laut segar.</p>
+                    <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                        <span>📍 11,81 km</span>
+                        <span>⏱ 29 mnt (0,49 jam)</span>
+                    </div>
+                </div>
+
+                <!-- 11: Pantai Ngebum -->
+                <div class="dest-card bg-white rounded-2xl border border-border p-6 reveal" data-category="pantai">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M2 20h20v2H2v-2zm2-8h2v7H4v-7zm5-3h2v10H9V9zm5-4h2v14h-2V5zm5 6h2v8h-2v-8z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full">Pantai</span>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800 mb-1">Pantai Ngebum</h3>
+                    <p class="text-xs text-accent font-medium mb-2">Kec. Kaliwungu</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">Pantai berpasir hitam yang luas di pesisir Mororejo dengan panorama Laut Jawa, perahu nelayan, dan rekreasi keluarga.</p>
+                    <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                        <span>📍 17,24 km</span>
+                        <span>⏱ 26 mnt (0,44 jam)</span>
+                    </div>
+                </div>
+
+                <!-- 12: Pantai Cahaya -->
+                <div class="dest-card bg-white rounded-2xl border border-border p-6 reveal" data-category="pantai">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M2 20h20v2H2v-2zm2-8h2v7H4v-7zm5-3h2v10H9V9zm5-4h2v14h-2V5zm5 6h2v8h-2v-8z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full">Pantai</span>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800 mb-1">Pantai Cahaya</h3>
+                    <p class="text-xs text-accent font-medium mb-2">Kec. Rowosari</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">Kawasan rekreasi bahari terpadu di Sendang Sikucing dengan atraksi lumba-lumba, kebun binatang mini, dan pemandangan sunset.</p>
+                    <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                        <span>📍 19,67 km</span>
+                        <span>⏱ 34 mnt (0,57 jam)</span>
+                    </div>
+                </div>
+
+            </div><!-- /grid -->
+        </div>
+    </section>
+
+
+    <!-- ============================================================
+         SECTION 3: PETA (MAP — qgis2web iframe)
+         ============================================================ -->
+    <section id="peta" class="py-20 lg:py-28 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Section Header -->
+            <div class="text-center mb-10 reveal">
+                <p class="text-xs font-semibold text-accent uppercase tracking-widest mb-3">Peta Interaktif</p>
+                <h2 class="text-3xl lg:text-4xl font-extrabold text-primary mb-4">Visualisasi Spasial Jaringan Jalan</h2>
+                <div class="section-divider mb-5"></div>
+                <p class="text-gray-500 max-w-xl mx-auto text-sm leading-relaxed">
+                    Peta interaktif hasil analisis QGIS menampilkan jaringan jalan, rute <em>shortest path</em>, 
+                    dan sebaran 12 destinasi wisata di Kabupaten Kendal.
+                </p>
+            </div>
+
+            <!-- Legend Panel -->
+            <div class="reveal mb-6">
+                <div class="legend-panel inline-flex flex-wrap items-center gap-x-6 gap-y-3 px-6 py-4 mx-auto">
+                    <span class="text-xs font-bold text-primary uppercase tracking-wider mr-2">Legenda:</span>
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-crimson" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <span class="text-xs text-gray-600 font-medium">Titik Pusat Optimal (Pegandon)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-3.5 h-3.5 bg-white border-2 border-gray-400 rounded-full inline-block"></span>
+                        <span class="text-xs text-gray-600 font-medium">12 Destinasi Wisata</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-0.5 bg-white border border-gray-400 inline-block"></span>
+                        <span class="text-xs text-gray-600 font-medium">Rute Shortest Path</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-3.5 h-3.5 bg-primary/30 border border-primary rounded inline-block"></span>
+                        <span class="text-xs text-gray-600 font-medium">Batas Administrasi Kab. Kendal</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map Container -->
+            <div class="reveal">
+                <div class="map-container">
+                    <iframe 
+                        src="map-qgis/index.html" 
+                        title="Peta Interaktif Kabupaten Kendal"
+                        loading="lazy"
+                        allowfullscreen
+                    ></iframe>
+                </div>
+                <p class="text-center text-xs text-gray-400 mt-3">
+                    Gunakan scroll mouse untuk zoom dan klik-tarik untuk navigasi peta. Data spasial diolah menggunakan QGIS &amp; qgis2web.
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ============================================================
+         SECTION 4: PERHITUNGAN — O-D Matrix & Komparasi
+         ============================================================ -->
+    <section id="perhitungan" class="py-20 lg:py-28 bg-surface">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Section Header -->
+            <div class="text-center mb-12 reveal">
+                <p class="text-xs font-semibold text-accent uppercase tracking-widest mb-3">Analisis Kuantitatif</p>
+                <h2 class="text-3xl lg:text-4xl font-extrabold text-primary mb-4">Komparasi Location-Allocation</h2>
+                <div class="section-divider mb-5"></div>
+                <p class="text-gray-500 max-w-2xl mx-auto text-sm leading-relaxed">
+                    Hasil perhitungan matriks biaya asal-tujuan (<em>Origin-Destination Cost Matrix</em>) 
+                    menunjukkan akumulasi total jarak jaringan dan waktu tempuh dari ketiga titik kandidat ke 12 destinasi wisata.
+                </p>
+            </div>
+
+            <!-- Tab Buttons untuk Tampilan Tabel -->
+            <div class="flex flex-wrap justify-center gap-2 mb-6 reveal">
+                <button data-table-target="pane-summary" class="table-tab-btn px-4 py-2 rounded-xl text-xs font-semibold border border-border bg-primary text-white shadow-sm transition">
+                    Ringkasan Komparasi
+                </button>
+                <button data-table-target="pane-pegandon" class="table-tab-btn px-4 py-2 rounded-xl text-xs font-semibold border border-border bg-white text-gray-600 hover:border-primary transition">
+                    Titik B: Pegandon (Optimal)
+                </button>
+                <button data-table-target="pane-sukorejo" class="table-tab-btn px-4 py-2 rounded-xl text-xs font-semibold border border-border bg-white text-gray-600 hover:border-primary transition">
+                    Titik A: Sukorejo
+                </button>
+                <button data-table-target="pane-boja" class="table-tab-btn px-4 py-2 rounded-xl text-xs font-semibold border border-border bg-white text-gray-600 hover:border-primary transition">
+                    Titik C: Boja
+                </button>
+                <button data-table-target="pane-matrix-all" class="table-tab-btn px-4 py-2 rounded-xl text-xs font-semibold border border-border bg-white text-gray-600 hover:border-primary transition">
+                    Matriks Lengkap
+                </button>
+            </div>
+
+            <!-- Tab Content Containers -->
+            <div class="reveal mb-14">
+
+                <!-- PANE 1: Ringkasan Komparasi Utama -->
+                <div id="pane-summary" class="table-tab-pane bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="data-table w-full text-left">
+                            <thead>
+                                <tr>
+                                    <th>Kandidat</th>
+                                    <th>Lokasi Simpang</th>
+                                    <th>Wilayah</th>
+                                    <th class="text-right">Total Jarak (km)</th>
+                                    <th class="text-right">Total Waktu (mnt)</th>
+                                    <th class="text-right">Rata² Jarak (km)</th>
+                                    <th class="text-right">Rata² Waktu (mnt)</th>
+                                    <th class="text-center">Status Optimal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-semibold text-gray-700">Titik A</td>
+                                    <td>Sukorejo</td>
+                                    <td>
+                                        <span class="inline-flex items-center gap-1 text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">
+                                            Wilayah Barat Daya
+                                        </span>
+                                    </td>
+                                    <td class="text-right font-mono text-sm">566,24</td>
+                                    <td class="text-right font-mono text-sm">1.477</td>
+                                    <td class="text-right font-mono text-sm text-gray-500">47,19</td>
+                                    <td class="text-right font-mono text-sm text-gray-500">123</td>
+                                    <td class="text-center">
+                                        <span class="text-xs text-gray-400 font-medium">—</span>
+                                    </td>
+                                </tr>
+                                <tr class="row-optimal">
+                                    <td class="font-bold text-primary">Titik B</td>
+                                    <td class="font-bold text-primary">Pegandon</td>
+                                    <td>
+                                        <span class="inline-flex items-center gap-1 text-xs bg-green-100 text-primary font-semibold px-2.5 py-1 rounded-full">
+                                            Wilayah Utara
+                                        </span>
+                                    </td>
+                                    <td class="text-right font-mono text-sm font-bold text-primary">355,72</td>
+                                    <td class="text-right font-mono text-sm font-bold text-primary">605</td>
+                                    <td class="text-right font-mono text-sm font-bold text-primary">29,64</td>
+                                    <td class="text-right font-mono text-sm font-bold text-primary">50</td>
+                                    <td class="text-center">
+                                        <span class="badge-optimal">
+                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                            Paling Optimal
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-gray-700">Titik C</td>
+                                    <td>Boja</td>
+                                    <td>
+                                        <span class="inline-flex items-center gap-1 text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">
+                                            Wilayah Tenggara
+                                        </span>
+                                    </td>
+                                    <td class="text-right font-mono text-sm">369,33</td>
+                                    <td class="text-right font-mono text-sm">636</td>
+                                    <td class="text-right font-mono text-sm text-gray-500">30,78</td>
+                                    <td class="text-right font-mono text-sm text-gray-500">53</td>
+                                    <td class="text-center">
+                                        <span class="text-xs text-gray-400 font-medium">—</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="px-6 py-4 bg-green-50/70 border-t border-green-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                        <p class="text-gray-600">
+                            <strong class="text-primary font-bold">Hasil Evaluasi:</strong> Simpang Pegandon (Kandidat B) merupakan titik pusat fasilitas pariwisata terpadu paling efisien dengan <strong>total jarak 355,72 km</strong> (hemat 13,61 km vs Boja &amp; 210,52 km vs Sukorejo) dan <strong>waktu tempuh 605 menit</strong> (hemat 31 menit vs Boja &amp; 872 menit vs Sukorejo).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- PANE 2: Rincian Titik B (Pegandon) -->
+                <div id="pane-pegandon" class="table-tab-pane hidden bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
+                    <div class="px-6 py-4 bg-primary text-white flex items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-sm">Tabel Rincian O-D: Titik B (Pegandon)</h3>
+                            <p class="text-xs text-white/70">Pusat Fasilitas Pariwisata Terpadu Terpilih (Paling Optimal)</p>
+                        </div>
+                        <span class="badge-optimal bg-white text-primary">Kandidat B</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="data-table w-full text-left">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Objek Wisata</th>
+                                    <th class="text-right">Jarak (km)</th>
+                                    <th class="text-right">Waktu (jam)</th>
+                                    <th class="text-right">Waktu (menit)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class="text-gray-400 text-xs">1</td><td class="font-medium text-gray-800">Curug Lawe Sicepit</td><td class="text-right font-mono text-sm">41,27</td><td class="text-right font-mono text-sm">1,22</td><td class="text-right font-mono text-sm font-semibold text-gray-700">73</td></tr>
+                                <tr><td class="text-gray-400 text-xs">2</td><td class="font-medium text-gray-800">Curug Semawur</td><td class="text-right font-mono text-sm">53,61</td><td class="text-right font-mono text-sm">1,83</td><td class="text-right font-mono text-sm font-semibold text-gray-700">110</td></tr>
+                                <tr><td class="text-gray-400 text-xs">3</td><td class="font-medium text-gray-800">Curug Sewu</td><td class="text-right font-mono text-sm">39,56</td><td class="text-right font-mono text-sm">0,94</td><td class="text-right font-mono text-sm font-semibold text-gray-700">56</td></tr>
+                                <tr><td class="text-gray-400 text-xs">4</td><td class="font-medium text-gray-800">Pemandian Air Panas Nglimut</td><td class="text-right font-mono text-sm">38,62</td><td class="text-right font-mono text-sm">1,05</td><td class="text-right font-mono text-sm font-semibold text-gray-700">63</td></tr>
+                                <tr><td class="text-gray-400 text-xs">5</td><td class="font-medium text-gray-800">Kebun Teh Medini</td><td class="text-right font-mono text-sm">41,66</td><td class="text-right font-mono text-sm">1,25</td><td class="text-right font-mono text-sm font-semibold text-gray-700">75</td></tr>
+                                <tr><td class="text-gray-400 text-xs">6</td><td class="font-medium text-gray-800">River Walk Boja</td><td class="text-right font-mono text-sm">27,66</td><td class="text-right font-mono text-sm">0,61</td><td class="text-right font-mono text-sm font-semibold text-gray-700">37</td></tr>
+                                <tr><td class="text-gray-400 text-xs">7</td><td class="font-medium text-gray-800">Goa Kiskendo</td><td class="text-right font-mono text-sm">24,78</td><td class="text-right font-mono text-sm">0,59</td><td class="text-right font-mono text-sm font-semibold text-gray-700">36</td></tr>
+                                <tr><td class="text-gray-400 text-xs">8</td><td class="font-medium text-gray-800">Hutan Pinus Nglimut</td><td class="text-right font-mono text-sm">39,04</td><td class="text-right font-mono text-sm">1,08</td><td class="text-right font-mono text-sm font-semibold text-gray-700">65</td></tr>
+                                <tr class="bg-amber-50/40"><td class="text-gray-400 text-xs">9</td><td class="font-bold text-accent">Tirto Arum Kendal</td><td class="text-right font-mono text-sm font-bold text-accent">0,79</td><td class="text-right font-mono text-sm font-bold text-accent">0,01</td><td class="text-right font-mono text-sm font-bold text-accent">1</td></tr>
+                                <tr><td class="text-gray-400 text-xs">10</td><td class="font-medium text-gray-800">Pantai Indah Kemangi</td><td class="text-right font-mono text-sm">11,81</td><td class="text-right font-mono text-sm">0,49</td><td class="text-right font-mono text-sm font-semibold text-gray-700">29</td></tr>
+                                <tr><td class="text-gray-400 text-xs">11</td><td class="font-medium text-gray-800">Pantai Ngebum</td><td class="text-right font-mono text-sm">17,24</td><td class="text-right font-mono text-sm">0,44</td><td class="text-right font-mono text-sm font-semibold text-gray-700">26</td></tr>
+                                <tr><td class="text-gray-400 text-xs">12</td><td class="font-medium text-gray-800">Pantai Cahaya</td><td class="text-right font-mono text-sm">19,67</td><td class="text-right font-mono text-sm">0,57</td><td class="text-right font-mono text-sm font-semibold text-gray-700">34</td></tr>
+                            </tbody>
+                            <tfoot class="bg-gray-50 font-bold border-t-2 border-gray-200">
+                                <tr class="bg-green-50/80">
+                                    <td colspan="2" class="p-3 text-primary font-bold text-xs uppercase">Total / Menit</td>
+                                    <td class="p-3 text-right font-mono text-sm font-bold text-primary">355,72</td>
+                                    <td class="p-3 text-right font-mono text-sm text-gray-400">—</td>
+                                    <td class="p-3 text-right font-mono text-sm font-bold text-primary">605</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="p-3 text-gray-600 font-semibold text-xs uppercase">Rata-rata</td>
+                                    <td class="p-3 text-right font-mono text-sm text-gray-700 font-bold">29,64</td>
+                                    <td class="p-3 text-right font-mono text-sm text-gray-400">—</td>
+                                    <td class="p-3 text-right font-mono text-sm text-gray-700 font-bold">50</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PANE 3: Rincian Titik A (Sukorejo) -->
+                <div id="pane-sukorejo" class="table-tab-pane hidden bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
+                    <div class="px-6 py-4 bg-gray-700 text-white flex items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-sm">Tabel Rincian O-D: Titik A (Sukorejo)</h3>
+                            <p class="text-xs text-white/70">Kandidat Wilayah Selatan Kendal</p>
+                        </div>
+                        <span class="text-xs bg-white/20 text-white px-2.5 py-1 rounded-full font-bold">Kandidat A</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="data-table w-full text-left">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Objek Wisata</th>
+                                    <th class="text-right">Jarak (km)</th>
+                                    <th class="text-right">Waktu (jam)</th>
+                                    <th class="text-right">Waktu (menit)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class="text-gray-400 text-xs">1</td><td class="font-medium text-gray-800">Curug Lawe Sicepit</td><td class="text-right font-mono text-sm">71,65</td><td class="text-right font-mono text-sm">2,95</td><td class="text-right font-mono text-sm">177</td></tr>
+                                <tr><td class="text-gray-400 text-xs">2</td><td class="font-medium text-gray-800">Curug Semawur</td><td class="text-right font-mono text-sm">23,81</td><td class="text-right font-mono text-sm">1,20</td><td class="text-right font-mono text-sm">72</td></tr>
+                                <tr><td class="text-gray-400 text-xs">3</td><td class="font-medium text-gray-800">Curug Sewu</td><td class="text-right font-mono text-sm">4,43</td><td class="text-right font-mono text-sm">0,18</td><td class="text-right font-mono text-sm">11</td></tr>
+                                <tr><td class="text-gray-400 text-xs">4</td><td class="font-medium text-gray-800">Pemandian Air Panas Nglimut</td><td class="text-right font-mono text-sm">69,00</td><td class="text-right font-mono text-sm">2,77</td><td class="text-right font-mono text-sm">166</td></tr>
+                                <tr><td class="text-gray-400 text-xs">5</td><td class="font-medium text-gray-800">Kebun Teh Medini</td><td class="text-right font-mono text-sm">72,04</td><td class="text-right font-mono text-sm">2,98</td><td class="text-right font-mono text-sm">179</td></tr>
+                                <tr><td class="text-gray-400 text-xs">6</td><td class="font-medium text-gray-800">River Walk Boja</td><td class="text-right font-mono text-sm">58,04</td><td class="text-right font-mono text-sm">2,34</td><td class="text-right font-mono text-sm">140</td></tr>
+                                <tr><td class="text-gray-400 text-xs">7</td><td class="font-medium text-gray-800">Goa Kiskendo</td><td class="text-right font-mono text-sm">55,16</td><td class="text-right font-mono text-sm">2,32</td><td class="text-right font-mono text-sm">139</td></tr>
+                                <tr><td class="text-gray-400 text-xs">8</td><td class="font-medium text-gray-800">Hutan Pinus Nglimut</td><td class="text-right font-mono text-sm">69,00</td><td class="text-right font-mono text-sm">2,77</td><td class="text-right font-mono text-sm">166</td></tr>
+                                <tr><td class="text-gray-400 text-xs">9</td><td class="font-medium text-gray-800">Tirto Arum Kendal</td><td class="text-right font-mono text-sm">32,52</td><td class="text-right font-mono text-sm">1,59</td><td class="text-right font-mono text-sm">96</td></tr>
+                                <tr><td class="text-gray-400 text-xs">10</td><td class="font-medium text-gray-800">Pantai Indah Kemangi</td><td class="text-right font-mono text-sm">32,89</td><td class="text-right font-mono text-sm">1,80</td><td class="text-right font-mono text-sm">108</td></tr>
+                                <tr><td class="text-gray-400 text-xs">11</td><td class="font-medium text-gray-800">Pantai Ngebum</td><td class="text-right font-mono text-sm">47,61</td><td class="text-right font-mono text-sm">2,29</td><td class="text-right font-mono text-sm">137</td></tr>
+                                <tr><td class="text-gray-400 text-xs">12</td><td class="font-medium text-gray-800">Pantai Cahaya</td><td class="text-right font-mono text-sm">30,09</td><td class="text-right font-mono text-sm">1,44</td><td class="text-right font-mono text-sm">86</td></tr>
+                            </tbody>
+                            <tfoot class="bg-gray-50 font-bold border-t-2 border-gray-200">
+                                <tr>
+                                    <td colspan="2" class="p-3 text-gray-700 font-bold text-xs uppercase">Total / Menit</td>
+                                    <td class="p-3 text-right font-mono text-sm font-bold text-gray-800">566,24</td>
+                                    <td class="p-3 text-right font-mono text-sm text-gray-400">—</td>
+                                    <td class="p-3 text-right font-mono text-sm font-bold text-gray-800">1.477</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="p-3 text-gray-600 font-semibold text-xs uppercase">Rata-rata</td>
+                                    <td class="p-3 text-right font-mono text-sm text-gray-700">47,19</td>
+                                    <td class="p-3 text-right font-mono text-sm text-gray-400">—</td>
+                                    <td class="p-3 text-right font-mono text-sm text-gray-700">123</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PANE 4: Rincian Titik C (Boja) -->
+                <div id="pane-boja" class="table-tab-pane hidden bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
+                    <div class="px-6 py-4 bg-amber-700 text-white flex items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-sm">Tabel Rincian O-D: Titik C (Boja)</h3>
+                            <p class="text-xs text-white/70">Kandidat Wilayah Selatan / Tenggara Kendal</p>
+                        </div>
+                        <span class="text-xs bg-white/20 text-white px-2.5 py-1 rounded-full font-bold">Kandidat C</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="data-table w-full text-left">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Objek Wisata</th>
+                                    <th class="text-right">Jarak (km)</th>
+                                    <th class="text-right">Waktu (jam)</th>
+                                    <th class="text-right">Waktu (menit)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class="text-gray-400 text-xs">1</td><td class="font-medium text-gray-800">Curug Lawe Sicepit</td><td class="text-right font-mono text-sm">14,25</td><td class="text-right font-mono text-sm">0,64</td><td class="text-right font-mono text-sm">38</td></tr>
+                                <tr><td class="text-gray-400 text-xs">2</td><td class="font-medium text-gray-800">Curug Semawur</td><td class="text-right font-mono text-sm">84,02</td><td class="text-right font-mono text-sm">2,50</td><td class="text-right font-mono text-sm">150</td></tr>
+                                <tr><td class="text-gray-400 text-xs">3</td><td class="font-medium text-gray-800">Curug Sewu</td><td class="text-right font-mono text-sm">69,96</td><td class="text-right font-mono text-sm">1,61</td><td class="text-right font-mono text-sm">97</td></tr>
+                                <tr><td class="text-gray-400 text-xs">4</td><td class="font-medium text-gray-800">Pemandian Air Panas Nglimut</td><td class="text-right font-mono text-sm">11,60</td><td class="text-right font-mono text-sm">0,46</td><td class="text-right font-mono text-sm">28</td></tr>
+                                <tr><td class="text-gray-400 text-xs">5</td><td class="font-medium text-gray-800">Kebun Teh Medini</td><td class="text-right font-mono text-sm">14,64</td><td class="text-right font-mono text-sm">0,66</td><td class="text-right font-mono text-sm">40</td></tr>
+                                <tr><td class="text-gray-400 text-xs">6</td><td class="font-medium text-gray-800">River Walk Boja</td><td class="text-right font-mono text-sm">3,06</td><td class="text-right font-mono text-sm">0,08</td><td class="text-right font-mono text-sm">5</td></tr>
+                                <tr><td class="text-gray-400 text-xs">7</td><td class="font-medium text-gray-800">Goa Kiskendo</td><td class="text-right font-mono text-sm">10,40</td><td class="text-right font-mono text-sm">0,32</td><td class="text-right font-mono text-sm">19</td></tr>
+                                <tr><td class="text-gray-400 text-xs">8</td><td class="font-medium text-gray-800">Hutan Pinus Nglimut</td><td class="text-right font-mono text-sm">12,02</td><td class="text-right font-mono text-sm">0,49</td><td class="text-right font-mono text-sm">29</td></tr>
+                                <tr class="bg-amber-50/50"><td class="text-gray-400 text-xs">9</td><td class="font-medium text-amber-900">Tirto Arum Kendal</td><td class="text-right font-mono text-sm font-semibold text-amber-900">29,61</td><td class="text-right font-mono text-sm">0,66</td><td class="text-right font-mono text-sm font-semibold text-amber-900">39</td></tr>
+                                <tr><td class="text-gray-400 text-xs">10</td><td class="font-medium text-gray-800">Pantai Indah Kemangi</td><td class="text-right font-mono text-sm">42,22</td><td class="text-right font-mono text-sm">1,16</td><td class="text-right font-mono text-sm">70</td></tr>
+                                <tr class="bg-amber-50/50"><td class="text-gray-400 text-xs">11</td><td class="font-medium text-amber-900">Pantai Ngebum</td><td class="text-right font-mono text-sm font-semibold text-amber-900">27,47</td><td class="text-right font-mono text-sm">0,77</td><td class="text-right font-mono text-sm font-semibold text-amber-900">46</td></tr>
+                                <tr><td class="text-gray-400 text-xs">12</td><td class="font-medium text-gray-800">Pantai Cahaya</td><td class="text-right font-mono text-sm">50,07</td><td class="text-right font-mono text-sm">1,24</td><td class="text-right font-mono text-sm">75</td></tr>
+                            </tbody>
+                            <tfoot class="bg-gray-50 font-bold border-t-2 border-gray-200">
+                                <tr>
+                                    <td colspan="2" class="p-3 text-gray-700 font-bold text-xs uppercase">Total / Menit</td>
+                                    <td class="p-3 text-right font-mono text-sm font-bold text-gray-800">369,33</td>
+                                    <td class="p-3 text-right font-mono text-sm text-gray-400">—</td>
+                                    <td class="p-3 text-right font-mono text-sm font-bold text-gray-800">636</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="p-3 text-gray-600 font-semibold text-xs uppercase">Rata-rata</td>
+                                    <td class="p-3 text-right font-mono text-sm text-gray-700">30,78</td>
+                                    <td class="p-3 text-right font-mono text-sm text-gray-400">—</td>
+                                    <td class="p-3 text-right font-mono text-sm text-gray-700">53</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PANE 5: Matriks Lengkap Komparasi 3 Titik -->
+                <div id="pane-matrix-all" class="table-tab-pane hidden bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
+                    <div class="px-6 py-4 bg-primary text-white">
+                        <h3 class="font-bold text-sm">Matriks Perbandingan Lengkap: 3 Kandidat Pusat Fasilitas</h3>
+                        <p class="text-xs text-white/70">Jarak (km) &amp; Waktu Tempuh (menit) ke 12 Objek Wisata</p>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="data-table w-full text-left text-xs">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" class="align-middle">Objek Wisata</th>
+                                    <th colspan="2" class="text-center bg-gray-800">Titik A (Sukorejo)</th>
+                                    <th colspan="2" class="text-center bg-green-900 border-x border-green-700">Titik B (Pegandon - Optimal)</th>
+                                    <th colspan="2" class="text-center bg-amber-800">Titik C (Boja)</th>
+                                </tr>
+                                <tr>
+                                    <th class="text-right bg-gray-800/90">Jarak</th>
+                                    <th class="text-right bg-gray-800/90">Waktu</th>
+                                    <th class="text-right bg-green-900/90 border-l border-green-700">Jarak</th>
+                                    <th class="text-right bg-green-900/90 border-r border-green-700">Waktu</th>
+                                    <th class="text-right bg-amber-800/90">Jarak</th>
+                                    <th class="text-right bg-amber-800/90">Waktu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class="font-medium">Curug Lawe Sicepit</td><td class="text-right font-mono">71,65 km</td><td class="text-right font-mono">177 mnt</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">41,27 km</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">73 mnt</td><td class="text-right font-mono">14,25 km</td><td class="text-right font-mono">38 mnt</td></tr>
+                                <tr><td class="font-medium">Curug Semawur</td><td class="text-right font-mono">23,81 km</td><td class="text-right font-mono">72 mnt</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">53,61 km</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">110 mnt</td><td class="text-right font-mono">84,02 km</td><td class="text-right font-mono">150 mnt</td></tr>
+                                <tr><td class="font-medium">Curug Sewu</td><td class="text-right font-mono">4,43 km</td><td class="text-right font-mono">11 mnt</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">39,56 km</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">56 mnt</td><td class="text-right font-mono">69,96 km</td><td class="text-right font-mono">97 mnt</td></tr>
+                                <tr><td class="font-medium">Pemandian Air Panas Nglimut</td><td class="text-right font-mono">69,00 km</td><td class="text-right font-mono">166 mnt</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">38,62 km</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">63 mnt</td><td class="text-right font-mono">11,60 km</td><td class="text-right font-mono">28 mnt</td></tr>
+                                <tr><td class="font-medium">Kebun Teh Medini</td><td class="text-right font-mono">72,04 km</td><td class="text-right font-mono">179 mnt</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">41,66 km</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">75 mnt</td><td class="text-right font-mono">14,64 km</td><td class="text-right font-mono">40 mnt</td></tr>
+                                <tr><td class="font-medium">River Walk Boja</td><td class="text-right font-mono">58,04 km</td><td class="text-right font-mono">140 mnt</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">27,66 km</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">37 mnt</td><td class="text-right font-mono">3,06 km</td><td class="text-right font-mono">5 mnt</td></tr>
+                                <tr><td class="font-medium">Goa Kiskendo</td><td class="text-right font-mono">55,16 km</td><td class="text-right font-mono">139 mnt</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">24,78 km</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">36 mnt</td><td class="text-right font-mono">10,40 km</td><td class="text-right font-mono">19 mnt</td></tr>
+                                <tr><td class="font-medium">Hutan Pinus Nglimut</td><td class="text-right font-mono">69,00 km</td><td class="text-right font-mono">166 mnt</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">39,04 km</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">65 mnt</td><td class="text-right font-mono">12,02 km</td><td class="text-right font-mono">29 mnt</td></tr>
+                                <tr><td class="font-medium">Tirto Arum Kendal</td><td class="text-right font-mono">32,52 km</td><td class="text-right font-mono">96 mnt</td><td class="text-right font-mono font-bold text-accent bg-green-50/50">0,79 km</td><td class="text-right font-mono font-bold text-accent bg-green-50/50">1 mnt</td><td class="text-right font-mono">29,61 km</td><td class="text-right font-mono">39 mnt</td></tr>
+                                <tr><td class="font-medium">Pantai Indah Kemangi</td><td class="text-right font-mono">32,89 km</td><td class="text-right font-mono">108 mnt</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">11,81 km</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">29 mnt</td><td class="text-right font-mono">42,22 km</td><td class="text-right font-mono">70 mnt</td></tr>
+                                <tr><td class="font-medium">Pantai Ngebum</td><td class="text-right font-mono">47,61 km</td><td class="text-right font-mono">137 mnt</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">17,24 km</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">26 mnt</td><td class="text-right font-mono">27,47 km</td><td class="text-right font-mono">46 mnt</td></tr>
+                                <tr><td class="font-medium">Pantai Cahaya</td><td class="text-right font-mono">30,09 km</td><td class="text-right font-mono">86 mnt</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">19,67 km</td><td class="text-right font-mono font-bold text-primary bg-green-50/50">34 mnt</td><td class="text-right font-mono">50,07 km</td><td class="text-right font-mono">75 mnt</td></tr>
+                            </tbody>
+                            <tfoot class="bg-gray-100 font-bold border-t-2 border-gray-300">
+                                <tr class="bg-green-100/70">
+                                    <td class="p-2.5 font-bold text-primary uppercase">Total / Menit</td>
+                                    <td class="p-2.5 text-right font-mono">566,24 km</td>
+                                    <td class="p-2.5 text-right font-mono">1.477 mnt</td>
+                                    <td class="p-2.5 text-right font-mono font-bold text-primary bg-green-200/50">355,72 km</td>
+                                    <td class="p-2.5 text-right font-mono font-bold text-primary bg-green-200/50">605 mnt</td>
+                                    <td class="p-2.5 text-right font-mono">369,33 km</td>
+                                    <td class="p-2.5 text-right font-mono">636 mnt</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2.5 font-semibold text-gray-700 uppercase">Rata-rata</td>
+                                    <td class="p-2.5 text-right font-mono text-gray-600">47,19 km</td>
+                                    <td class="p-2.5 text-right font-mono text-gray-600">123 mnt</td>
+                                    <td class="p-2.5 text-right font-mono font-bold text-primary bg-green-200/50">29,64 km</td>
+                                    <td class="p-2.5 text-right font-mono font-bold text-primary bg-green-200/50">50 mnt</td>
+                                    <td class="p-2.5 text-right font-mono text-gray-600">30,78 km</td>
+                                    <td class="p-2.5 text-right font-mono text-gray-600">53 mnt</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Interactive Dropdown Simulation -->
+            <div class="reveal">
+                <div class="bg-white rounded-2xl border border-border shadow-sm p-6 lg:p-8">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-primary mb-1">Simulasi Rute dari Pegandon</h3>
+                            <p class="text-xs text-gray-500">Pilih destinasi wisata untuk melihat rincian jarak, waktu tempuh, hierarki jalan, serta perbandingan dengan kandidat lain.</p>
+                        </div>
+                        <div class="sm:w-80">
+                            <select id="dest-select" class="custom-select w-full bg-surface border border-border rounded-xl px-4 py-3 text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition">
+                                <option value="">— Pilih Destinasi Wisata —</option>
+                                <option value="1">1. Curug Lawe Sicepit</option>
+                                <option value="2">2. Curug Semawur</option>
+                                <option value="3">3. Curug Sewu</option>
+                                <option value="4">4. Pemandian Air Panas Nglimut</option>
+                                <option value="5">5. Kebun Teh Medini</option>
+                                <option value="6">6. River Walk Boja</option>
+                                <option value="7">7. Goa Kiskendo</option>
+                                <option value="8">8. Hutan Pinus Nglimut</option>
+                                <option value="9">9. Tirto Arum Kendal</option>
+                                <option value="10">10. Pantai Indah Kemangi</option>
+                                <option value="11">11. Pantai Ngebum</option>
+                                <option value="12">12. Pantai Cahaya</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Detail Panel (animated) -->
+                    <div id="detail-panel" class="detail-panel">
+                        <div class="bg-surface rounded-xl border border-border p-6">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
+                                <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-primary text-base" id="detail-name">—</h4>
+                                    <p class="text-xs text-gray-500" id="detail-kec">—</p>
+                                </div>
+                            </div>
+
+                            <!-- Primary Pegandon stats -->
+                            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+                                <div class="bg-white rounded-xl border border-border p-4 text-center">
+                                    <p class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Jarak (Pegandon)</p>
+                                    <p class="text-lg font-bold text-primary" id="detail-dist">—</p>
+                                </div>
+                                <div class="bg-white rounded-xl border border-border p-4 text-center">
+                                    <p class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Estimasi Waktu</p>
+                                    <p class="text-lg font-bold text-accent" id="detail-time">—</p>
+                                </div>
+                                <div class="bg-white rounded-xl border border-border p-4 text-center">
+                                    <p class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Hierarki Jalan</p>
+                                    <p class="text-lg font-bold text-gray-700" id="detail-road">—</p>
+                                </div>
+                                <div class="bg-white rounded-xl border border-border p-4 text-center">
+                                    <p class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Kecepatan Rata²</p>
+                                    <p class="text-lg font-bold text-gray-700" id="detail-speed">—</p>
+                                </div>
+                            </div>
+
+                            <!-- Comparative Cards: Titik A vs B vs C -->
+                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                <p class="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-3">Perbandingan Aksesibilitas 3 Titik Kandidat:</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                                    <div class="bg-white rounded-xl border border-border p-3">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="font-semibold text-gray-700">Titik A (Sukorejo)</span>
+                                            <span class="text-[10px] text-gray-400">Selatan</span>
+                                        </div>
+                                        <div class="flex justify-between text-gray-600 font-mono">
+                                            <span id="cmp-a-dist">—</span>
+                                            <span id="cmp-a-time" class="font-semibold">—</span>
+                                        </div>
+                                    </div>
+                                    <div class="bg-green-50 rounded-xl border border-green-200 p-3">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="font-bold text-primary">Titik B (Pegandon)</span>
+                                            <span class="text-[10px] bg-green-200 text-green-800 font-bold px-1.5 py-0.5 rounded">Optimal</span>
+                                        </div>
+                                        <div class="flex justify-between text-primary font-mono font-bold">
+                                            <span id="cmp-b-dist">—</span>
+                                            <span id="cmp-b-time">—</span>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white rounded-xl border border-border p-3">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="font-semibold text-gray-700">Titik C (Boja)</span>
+                                            <span class="text-[10px] text-gray-400">Tenggara</span>
+                                        </div>
+                                        <div class="flex justify-between text-gray-600 font-mono">
+                                            <span id="cmp-c-dist">—</span>
+                                            <span id="cmp-c-time" class="font-semibold">—</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-3 border-t border-gray-100">
+                                <p class="text-[11px] text-gray-400">
+                                    <strong>Catatan Teknis:</strong> Perhitungan menggunakan algoritma Dijkstra pada jaringan jalan berbobot (impedance: travel time). Kecepatan desain: Arteri (60 km/jam), Kolektor (40 km/jam), Lokal (25 km/jam).
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ============================================================
+         SECTION 5: METODOLOGI
+         ============================================================ -->
+    <section id="metodologi" class="py-20 lg:py-28 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Section Header -->
+            <div class="text-center mb-14 reveal">
+                <p class="text-xs font-semibold text-accent uppercase tracking-widest mb-3">Alur Penelitian</p>
+                <h2 class="text-3xl lg:text-4xl font-extrabold text-primary mb-4">Metodologi Analisis</h2>
+                <div class="section-divider mb-5"></div>
+                <p class="text-gray-500 max-w-xl mx-auto text-sm leading-relaxed">
+                    Empat tahapan utama dalam proses analisis penentuan lokasi optimal fasilitas pariwisata terpadu 
+                    menggunakan pendekatan <em>Network Analysis</em> pada perangkat lunak QGIS.
+                </p>
+            </div>
+
+            <!-- Steps Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-5">
+                <!-- Step 1 -->
+                <div class="step-card bg-white rounded-2xl border border-border p-6 reveal reveal-delay-1">
+                    <div class="step-connector hidden lg:block"></div>
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="step-number">1</div>
+                        <div class="h-px flex-1 bg-gradient-to-r from-border to-transparent"></div>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800 mb-2">Digitasi &amp; Data Spasial</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        Pengumpulan dan digitasi data spasial jaringan jalan, batas administrasi kecamatan, 
+                        serta titik koordinat 12 destinasi wisata dan 3 titik kandidat menggunakan 
+                        citra satelit dan data BIG/InaGeoportal.
+                    </p>
+                    <div class="mt-4 flex flex-wrap gap-1.5">
+                        <span class="text-[10px] bg-surface text-gray-500 px-2 py-0.5 rounded-full border border-border">Shapefile</span>
+                        <span class="text-[10px] bg-surface text-gray-500 px-2 py-0.5 rounded-full border border-border">GeoJSON</span>
+                        <span class="text-[10px] bg-surface text-gray-500 px-2 py-0.5 rounded-full border border-border">On-Screen</span>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step-card bg-white rounded-2xl border border-border p-6 reveal reveal-delay-2">
+                    <div class="step-connector hidden lg:block"></div>
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="step-number">2</div>
+                        <div class="h-px flex-1 bg-gradient-to-r from-border to-transparent"></div>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800 mb-2">Topologi &amp; Atribut Kecepatan</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        Pembangunan topologi jaringan jalan yang valid (node–edge connectivity) dan 
+                        pengisian atribut kecepatan berdasarkan hierarki fungsi jalan: 
+                        Arteri (60 km/jam), Kolektor (40 km/jam), dan Lokal (25 km/jam).
+                    </p>
+                    <div class="mt-4 flex flex-wrap gap-1.5">
+                        <span class="text-[10px] bg-surface text-gray-500 px-2 py-0.5 rounded-full border border-border">Network Dataset</span>
+                        <span class="text-[10px] bg-surface text-gray-500 px-2 py-0.5 rounded-full border border-border">Topology</span>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step-card bg-white rounded-2xl border border-border p-6 reveal reveal-delay-3">
+                    <div class="step-connector hidden lg:block"></div>
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="step-number">3</div>
+                        <div class="h-px flex-1 bg-gradient-to-r from-border to-transparent"></div>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800 mb-2">Analisis Shortest Path</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        Perhitungan rute terpendek menggunakan algoritma Dijkstra dari setiap titik kandidat 
+                        ke seluruh 12 destinasi wisata melalui jaringan jalan yang telah dibangun, 
+                        menghasilkan jarak jaringan (km) dan estimasi waktu tempuh (menit).
+                    </p>
+                    <div class="mt-4 flex flex-wrap gap-1.5">
+                        <span class="text-[10px] bg-surface text-gray-500 px-2 py-0.5 rounded-full border border-border">Dijkstra</span>
+                        <span class="text-[10px] bg-surface text-gray-500 px-2 py-0.5 rounded-full border border-border">O-D Matrix</span>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="step-card bg-white rounded-2xl border border-border p-6 reveal reveal-delay-4">
+                    <div class="step-connector hidden lg:block"></div>
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="step-number">4</div>
+                        <div class="h-px flex-1 bg-gradient-to-r from-border to-transparent"></div>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800 mb-2">Tabulasi Location-Allocation</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        Tabulasi dan komparasi akumulasi total jarak serta waktu tempuh ketiga kandidat 
+                        untuk menentukan titik pusat fasilitas dengan prinsip minimisasi total biaya 
+                        perjalanan (<em>p-median problem</em>).
+                    </p>
+                    <div class="mt-4 flex flex-wrap gap-1.5">
+                        <span class="text-[10px] bg-surface text-gray-500 px-2 py-0.5 rounded-full border border-border">p-Median</span>
+                        <span class="text-[10px] bg-surface text-gray-500 px-2 py-0.5 rounded-full border border-border">Tabulasi</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ============================================================
+         SECTION 6: TENTANG / FOOTER
+         ============================================================ -->
+    <section id="tentang" class="bg-primary">
+        <!-- About Content -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-16">
+                <!-- Column 1: About -->
+                <div class="lg:col-span-1">
+                    <div class="flex items-center gap-2.5 mb-5">
+                        <div class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="text-lg font-extrabold text-white tracking-tight">LO</span>
+                            <span class="text-lg font-extrabold text-accent tracking-tight ml-0.5">GIS</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-white/60 leading-relaxed mb-6">
+                        <strong class="text-white/80">Location-Allocation Geographic Information System</strong> — 
+                        Platform WebGIS untuk penelitian optimasi penentuan pusat fasilitas pariwisata terpadu 
+                        di Kabupaten Kendal berbasis analisis jaringan.
+                    </p>
+                    <p class="text-xs text-white/40">
+                        Dibangun sebagai bagian dari penelitian akademis bidang Geografi dan Sistem Informasi Geografis (SIG).
+                    </p>
+                </div>
+
+                <!-- Column 2: Researcher -->
+                <div>
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-5">Profil Peneliti</h4>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-xs text-white/40 uppercase tracking-wider mb-1">Peneliti</p>
+                            <p class="text-sm text-white/80 font-medium">Putra Inang Setiawan</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-white/40 uppercase tracking-wider mb-1">Judul Penelitian</p>
+                            <p class="text-sm text-white/80 font-medium leading-relaxed">
+                                Analisis Location-Allocation Berbasis SIG untuk Penentuan Lokasi 
+                                Optimal Fasilitas Pariwisata di Kabupaten Kendal
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-white/40 uppercase tracking-wider mb-1">Fokus Wilayah</p>
+                            <p class="text-sm text-white/80 font-medium">Kabupaten Kendal, Jawa Tengah</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 3: Data Sources -->
+                <div>
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-5">Sumber Data</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3">
+                            <span class="w-1.5 h-1.5 bg-accent rounded-full mt-1.5 flex-shrink-0"></span>
+                            <div>
+                                <p class="text-sm text-white/80 font-medium">Badan Informasi Geospasial (BIG)</p>
+                                <p class="text-xs text-white/40">InaGeoportal — Batas administrasi &amp; jaringan jalan</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-1.5 h-1.5 bg-accent rounded-full mt-1.5 flex-shrink-0"></span>
+                            <div>
+                                <p class="text-sm text-white/80 font-medium">Disporapar Kabupaten Kendal</p>
+                                <p class="text-xs text-white/40">Data 12 objek destinasi wisata &amp; sebaran fasilitas</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-1.5 h-1.5 bg-accent rounded-full mt-1.5 flex-shrink-0"></span>
+                            <div>
+                                <p class="text-sm text-white/80 font-medium">Digitasi On-Screen &amp; Topologi QGIS</p>
+                                <p class="text-xs text-white/40">Network Analysis (Shortest Path &amp; O-D Cost Matrix)</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-1.5 h-1.5 bg-accent rounded-full mt-1.5 flex-shrink-0"></span>
+                            <div>
+                                <p class="text-sm text-white/80 font-medium">OpenStreetMap (OSM)</p>
+                                <p class="text-xs text-white/40">Validasi geometri jaringan jalan &amp; basemap</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copyright Bar -->
+        <div class="border-t border-white/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <p class="text-xs text-white/40">
+                        &copy; 2026 LO GIS — Location-Allocation Geographic Information System. Hak cipta dilindungi.
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <span class="text-xs text-white/30">Dibangun dengan QGIS &bull; Tailwind CSS &bull; Vanilla JS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ============================================================
+         JAVASCRIPT
+         ============================================================ -->
+    <script src="js/app.js"></script>
+
+</body>
+</html>
